@@ -19,8 +19,18 @@
 
 - Use Xcode MCP for build, test, simulator, and project-inspection workflows.
 - Prefer Xcode MCP over direct `xcodebuild` commands because it is faster and easier to operate from agents.
+- The native Xcode MCP bridge is connected to Codex as the `Xcode` MCP server:
+
+```sh
+codex mcp add Xcode --env DEVELOPER_DIR=/Applications/Xcode-26.5.0.app/Contents/Developer -- xcrun mcpbridge
+```
+
+- Xcode must be open with MCP access enabled for the bridge to expose tools.
+- After adding or changing MCP configuration, restart Codex or start a new Codex session so the MCP tools load.
+- To verify the MCP connection, use Xcode MCP to list windows, then build the active project. A healthy connection should show `Commerce-ios.xcodeproj` and build the project successfully.
 - Before every commit, run the relevant tests through Xcode MCP.
 - If Xcode MCP is not available or not connected, stop and ask the user to connect it.
+- Do not use `xcrun mcpbridge run-agent codex` for this repo workflow. That launches Codex from Xcode and requires Codex to be configured inside Xcode; this repo uses Codex connected to Xcode's native MCP bridge instead.
 - Do not fall back to direct `xcodebuild` unless the user explicitly asks for that fallback.
 
 ## Coding Guidelines
@@ -51,6 +61,8 @@
 - After the user approves, prepare a commit message, run tests through Xcode MCP, commit, push, open a PR, and wait for user approval.
 - After the PR is approved or merged, ask whether the user wants to close the ticket.
 - When asked to file a new ticket, create it in GitHub with `gh issue create` and include enough context for another agent or developer to act on it.
+- For issue comments with Markdown, prefer `gh issue comment --body-file <file>` to avoid shell quoting problems with backticks and code fences.
+- Use `gh api --method PATCH .../issues/comments/<id>` only when editing an existing comment.
 
 ## Git Guidance
 
