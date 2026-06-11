@@ -6,6 +6,7 @@
 - The app is a SwiftUI application in `Commerce-ios/`.
 - Unit tests live in `Commerce-iosTests/` and use Swift Testing (`import Testing`).
 - The Xcode project is `Commerce-ios.xcodeproj`.
+- The app targets iOS 17+ and is iPhone-only.
 
 ## Repository Layout
 
@@ -36,11 +37,13 @@ codex mcp add Xcode --env DEVELOPER_DIR=/Applications/Xcode-26.5.0.app/Contents/
 ## Coding Guidelines
 
 - Follow existing SwiftUI patterns unless a change clearly calls for a new structure.
+- Prefer the Observation framework (`@Observable`, `@Bindable`, `@State`) over the older `ObservableObject` / `@StateObject` APIs for new app state.
 - Keep UI state local with `@State` until shared state or testability requires a model object.
 - Prefer small SwiftUI views composed from focused private helpers or subviews.
 - Keep user-facing strings centralized once the app has repeated text or localization needs.
 - Use Swift Testing for new unit tests with `@Test` and `#expect(...)`.
 - Avoid broad project-file churn in `Commerce-ios.xcodeproj/project.pbxproj`; make the smallest necessary Xcode project changes.
+- Favor modern SwiftUI APIs where they improve clarity or avoid legacy patterns.
 
 ## Agent Workflow
 

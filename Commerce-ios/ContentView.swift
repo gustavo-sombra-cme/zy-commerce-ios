@@ -8,17 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @State private var appState: AppState
 
-#Preview {
-    ContentView()
+    init(appState: AppState = AppState()) {
+        _appState = State(initialValue: appState)
+    }
+
+    var body: some View {
+        Group {
+            switch appState.launchState {
+            case .loading:
+                LoadingView(message: "Loading Commerce")
+            case .ready:
+                if let sessionStore = appState.sessionStore,
+                   let configuration = appState.configuration {
+                    AppShellView(
+                        sessionStore: sessionStore,
+                        configuration: configuration,
+                        onSignOut: appState.signOut
+                    )
+                } else {
+                    LoadingView(message: "Loading Commerce")
+                }
+            case .failed(let message):
+                FailureView(message: message)
+            }
+        }
+        .task {
+            appState.bootstrap()
+        }
+    }
 }
